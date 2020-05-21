@@ -1,3 +1,8 @@
 package com.example.myamazingapp
 
-data class Person(val name: String, val description: String, val avatarUrl: String)
+data class Person(
+    val id: String,
+    val name: String,
+    val description: String,
+    val avatarUrl: String
+)

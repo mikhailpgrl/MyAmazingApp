@@ -4,7 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class PersonAdapter : RecyclerView.Adapter<PersonViewHolder>() {
+class PersonAdapter(private val itemClickListener: OnItemClickListener) :
+    RecyclerView.Adapter<PersonViewHolder>() {
 
     private val personsList = mutableListOf<Person>()
 
@@ -13,10 +14,18 @@ class PersonAdapter : RecyclerView.Adapter<PersonViewHolder>() {
         notifyDataSetChanged()
     }
 
+    fun removePerson(id: String) {
+        val personToRemove = personsList.find { it.id == id }
+        personToRemove?.let {
+            personsList.remove(it)
+            notifyDataSetChanged()
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PersonViewHolder {
         val itemView =
             LayoutInflater.from(parent.context).inflate(R.layout.item_person, parent, false)
-        return PersonViewHolder(itemView)
+        return PersonViewHolder(itemView, itemClickListener)
     }
 
     override fun onBindViewHolder(holder: PersonViewHolder, position: Int) {
@@ -24,5 +33,9 @@ class PersonAdapter : RecyclerView.Adapter<PersonViewHolder>() {
     }
 
     override fun getItemCount() = personsList.size
+
+    interface OnItemClickListener {
+        fun onItemClicked(id: String)
+    }
 
 }
