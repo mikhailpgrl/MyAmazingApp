@@ -35,6 +35,11 @@ class MainActivity : AppCompatActivity(), PersonAdapter.OnItemClickListener {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        alertDialog?.dismiss()
+    }
+
     override fun onItemClicked(id: String) {
         alertDialog = AlertDialog.Builder(this)
             .setTitle("Delete Person")
