@@ -14,6 +14,12 @@ class PersonAdapter(private val itemClickListener: OnItemClickListener) :
         notifyDataSetChanged()
     }
 
+    fun setPersons(persons: List<Person>){
+        personsList.clear()
+        personsList.addAll(persons)
+        notifyDataSetChanged()
+    }
+
     fun removePerson(id: String) {
         val personToRemove = personsList.find { it.id == id }
         personToRemove?.let {

@@ -3,8 +3,12 @@ package com.example.myamazingapp
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 
@@ -12,6 +16,9 @@ class MainActivity : AppCompatActivity(), PersonAdapter.OnItemClickListener {
 
     private val random: Int
         get() = Random().nextInt(9)
+
+    private val bigRandom: Int
+        get() = Random().nextInt(10000)
 
     private lateinit var personAdapter: PersonAdapter
 
@@ -24,15 +31,19 @@ class MainActivity : AppCompatActivity(), PersonAdapter.OnItemClickListener {
         initRecyclerView()
 
         addPersonButton.setOnClickListener {
-            personAdapter.addPerson(
-                Person(
-                    id = random.toString(),
-                    name = getRandomName(),
-                    description = getRandomDescription(),
-                    avatarUrl = getRandomAvatarUrl()
-                )
+            val person = Person(
+                id = bigRandom.toString(),
+                name = getRandomName(),
+                description = getRandomDescription(),
+                avatarUrl = getRandomAvatarUrl()
             )
+            personAdapter.addPerson(person)
+
+            insertPerson(person)
+
         }
+
+        retrievePersons()
     }
 
     override fun onDestroy() {
@@ -69,4 +80,23 @@ class MainActivity : AppCompatActivity(), PersonAdapter.OnItemClickListener {
 
     private fun getRandomAvatarUrl() = "https://i.pravatar.cc/150?img=$random"
 
+
+    private fun insertPerson(person: Person) {
+        // Work on background thread
+        lifecycleScope.launch(Dispatchers.IO) {
+            (applicationContext as App).repository.insert(person = person)
+        }
+    }
+
+    private fun retrievePersons() {
+        // Work on background thread
+        lifecycleScope.launch(Dispatchers.IO) {
+            val persons = (applicationContext as App).repository.getAllPersons()
+            // Work on main thread
+
+            withContext(Dispatchers.Main) {
+                personAdapter.setPersons(persons)
+            }
+        }
+    }
 }
