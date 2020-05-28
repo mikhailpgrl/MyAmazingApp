@@ -14,4 +14,7 @@ interface PersonDao {
     @Query("SELECT * FROM ${Person.TABLE_NAME}")
     suspend fun getAllPersons(): List<Person>
 
+    @Query("DELETE FROM ${Person.TABLE_NAME} WHERE ${Person.ID} = :id")
+    suspend fun deleteById(id: String)
+
 }

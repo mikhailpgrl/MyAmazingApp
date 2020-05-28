@@ -51,12 +51,12 @@ class MainActivity : AppCompatActivity(), PersonAdapter.OnItemClickListener {
         alertDialog?.dismiss()
     }
 
-    override fun onItemClicked(id: String) {
+    override fun onItemClicked(id: PersonId) {
         alertDialog = AlertDialog.Builder(this)
             .setTitle("Delete Person")
             .setMessage("Do you want to delete the person from the list")
             .setPositiveButton("Yes") { dialog, _ ->
-                personAdapter.removePerson(id)
+                deletePersonById(id)
                 dialog.dismiss()
             }.setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
@@ -96,6 +96,16 @@ class MainActivity : AppCompatActivity(), PersonAdapter.OnItemClickListener {
 
             withContext(Dispatchers.Main) {
                 personAdapter.setPersons(persons)
+            }
+        }
+    }
+
+    private fun deletePersonById(id: PersonId) {
+        // Work on background thread
+        lifecycleScope.launch(Dispatchers.IO) {
+            (applicationContext as App).repository.deleteById(id)
+            withContext(Dispatchers.Main) {
+                personAdapter.removePerson(id)
             }
         }
     }

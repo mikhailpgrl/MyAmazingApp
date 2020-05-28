@@ -1,6 +1,7 @@
 package com.example.myamazingapp.data
 
 import com.example.myamazingapp.Person
+import com.example.myamazingapp.PersonId
 
 interface PersonRepository {
 
@@ -8,4 +9,5 @@ interface PersonRepository {
 
     suspend fun getAllPersons(): List<Person>
 
+    suspend fun deleteById(id: PersonId)
 }
